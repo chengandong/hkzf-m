@@ -5,6 +5,9 @@ import ReactDOM from 'react-dom';
 // 导入全局初始化样式
 import './index.css'
 
+// 导入antd-mobile 的样式
+import 'antd-mobile/dist/antd-mobile.css'
+
 // 导入 根组件
 import App from './App'
 

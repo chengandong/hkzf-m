@@ -1,17 +1,14 @@
+// 项目 入口文件
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+// 导入全局初始化样式
+import './index.css'
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+// 导入 根组件
+import App from './App'
+
+// 渲染到页面
+ReactDOM.render(<App />,document.getElementById('root'));
+
+

@@ -8,6 +8,9 @@ import './index.css'
 // 导入antd-mobile 的样式
 import 'antd-mobile/dist/antd-mobile.css'
 
+// 导入 字体图标 样式
+import './assets/fonts/iconfont.css'
+
 // 导入 根组件
 import App from './App'
 

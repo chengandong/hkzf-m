@@ -3,9 +3,7 @@
 import React, { Component } from 'react'
 
 // 导入路由的三个核心组件： Router / Route / Link
-import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
-
-import { Button } from 'antd-mobile'
+import {BrowserRouter as Router, Route} from 'react-router-dom'
 
 // 导入 Home 组件
 import Home from './pages/Home/'
@@ -15,8 +13,6 @@ export default class App extends Component {
     return (
       <Router>
         <div>
-          <h1>APP根组件</h1>
-          <Button type="primary">按钮</Button>
           {/* 指定路由展示组件相关信息 */}
           <Route path="/home" component={Home}></Route>
         </div>

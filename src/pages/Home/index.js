@@ -15,10 +15,60 @@ import Houselist from '../Houselist/'
 import News from '../News/'
 import Profile from '../Profile/'
 
+// 底部四个标签栏数据
+const tabItems = [
+  {
+    title: '首页',
+    icon: 'icon-ind',
+    path: '/home/index'
+  },
+  {
+    title: '找房',
+    icon: 'icon-findHouse',
+    path: '/home/houselist'
+  },
+  {
+    title: '资讯',
+    icon: 'icon-infom',
+    path: '/home/news'
+  },
+  {
+    title: '我的',
+    icon: 'icon-my',
+    path: '/home/profile'
+  }
+]
+
 export default class Home extends Component {
   state = {
-    selectedTab: 'redTab',
+    selectedTab: '/home/index',
     hidden: false,
+  }
+
+  // 渲染 底部标签栏 item项
+  renderTabbarItem () {
+    return tabItems.map((item, index) => {
+      return <TabBar.Item
+               title={item.title}
+               key={index}
+               icon={ // 默认展示图片
+                 <i className={`iconfont ${item.icon}`}></i>
+               }
+               selectedIcon={ // 选中后的展示图片
+                 <i className={`iconfont ${item.icon}`}></i>
+               }
+               selected={this.state.selectedTab === item.path}
+               onPress={() => {
+                 this.setState({
+                   selectedTab: item.path
+                 })
+                 // 点击 底部标签 跳转到 对应的页面
+                 this.props.history.push(item.path)
+               }}
+               data-seed="logId"
+              >
+              </TabBar.Item>
+      })
   }
 
   render() {
@@ -37,84 +87,10 @@ export default class Home extends Component {
           barTintColor="white" // tabbar 背景色
           hidden={this.state.hidden} // 是否隐藏
         >
-          <TabBar.Item
-            title="首页"
-            key="Life"
-            icon={ // 默认展示图片
-              <i className="iconfont icon-ind"></i>
-            }
-            selectedIcon={ // 选中后的展示图片
-              <i className="iconfont icon-ind"></i>
-            }
-            selected={this.state.selectedTab === 'blueTab'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'blueTab'
-              })
-              // 点击 底部标签 跳转到 对应的页面
-              this.props.history.push('/home/index')
-            }}
-            data-seed="logId"
-          >
-          </TabBar.Item>
-          <TabBar.Item
-            icon={
-              <i className="iconfont icon-findHouse"></i>
-            }
-            selectedIcon={
-              <i className="iconfont icon-findHouse"></i>
-            }
-            title="找房"
-            key="Koubei"
-            selected={this.state.selectedTab === 'redTab'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'redTab'
-              })
-              // 点击 底部标签 跳转到 对应的页面
-              this.props.history.push('/home/houselist')
-            }}
-            data-seed="logId1"
-          >
-          </TabBar.Item>
-          <TabBar.Item
-            icon={
-              <i className="iconfont icon-infom"></i>
-            }
-            selectedIcon={
-              <i className="iconfont icon-infom"></i>
-            }
-            title="资讯"
-            key="Friend"
-            selected={this.state.selectedTab === 'greenTab'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'greenTab'
-              })
-              // 点击 底部标签 跳转到 对应的页面
-              this.props.history.push('/home/news')
-            }}
-          >
-          </TabBar.Item>
-          <TabBar.Item
-            icon={
-              <i className="iconfont icon-my"></i>
-            }
-            selectedIcon={
-              <i className="iconfont icon-my"></i>
-            }
-            title="我的"
-            key="my"
-            selected={this.state.selectedTab === 'yellowTab'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'yellowTab'
-              })
-              // 点击 底部标签 跳转到 对应的页面
-              this.props.history.push('/home/profile')
-            }}
-          >
-          </TabBar.Item>
+          {/* 循环遍历 TabBar.Item */}
+          {
+            this.renderTabbarItem()
+          }
         </TabBar>
       </div>
     )

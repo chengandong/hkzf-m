@@ -75,7 +75,7 @@ export default class Home extends Component {
     return (
       <div className="home">
         {/* 显示 四个子路由 */}
-        <Route path="/home/index" component={Index}></Route>
+        <Route exact path="/home/index" component={Index}></Route>
         <Route exact path="/home/houselist" component={Houselist}></Route>
         <Route exact path="/home/news" component={News}></Route>
         <Route exact path="/home/profile" component={Profile}></Route>

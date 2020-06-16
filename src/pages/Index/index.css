@@ -1,0 +1,12 @@
+.navs{
+  background-color: #fff;
+  text-align: center;
+  padding: 12px 0;
+}
+.navs img{
+  width: 48px;
+  height: 48px;
+}
+.navs p{
+  padding-top: 6px;
+}

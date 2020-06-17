@@ -168,7 +168,12 @@ export default class Index extends Component {
               <span>请输入小区或地址</span>
             </div>
           </Flex>
-          <i className="iconfont icon-map"  />
+          <i
+            className="iconfont icon-map"
+            onClick={() => {
+              this.props.history.push('/map')
+            }}
+          />
         </Flex>
         {/* 轮播图 */}
         <Carousel

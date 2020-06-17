@@ -152,6 +152,24 @@ export default class Index extends Component {
   render() {
     return (
       <div className="index">
+        {/* 顶部导航 */}
+        <Flex className='searchBox'>
+          <Flex className='searchLeft'>
+            <div
+              className='location'
+            >
+              <span>上海</span>
+              <i className="iconfont icon-arrow" />
+            </div>
+            <div
+              className='searchForm'
+            >
+              <i className="iconfont icon-seach" />
+              <span>请输入小区或地址</span>
+            </div>
+          </Flex>
+          <i className="iconfont icon-map"  />
+        </Flex>
         {/* 轮播图 */}
         <Carousel
           autoplay={this.state.isPlay} // 是否自动切换
@@ -209,7 +227,7 @@ export default class Index extends Component {
             }       
           </ul>
         </div>
-        
+
       </div>
     )
   }

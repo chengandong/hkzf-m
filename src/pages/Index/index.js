@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import axios from 'axios'
 
 // 导入样式
-import './index.css'
+import './index.scss'
 
 // 导入 轮播图 组件
 import { Carousel, Flex } from 'antd-mobile'

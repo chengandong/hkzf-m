@@ -13,7 +13,7 @@ export default class App extends Component {
   render() {
     return (
       <Router>
-        <div>
+        <div className="app">
           {/* 页面重定向 */}
           <Route
             exact

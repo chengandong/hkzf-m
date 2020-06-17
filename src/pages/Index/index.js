@@ -41,13 +41,15 @@ export default class Index extends Component {
     SwiperData: [], // 轮播图数据
     imgHeight: 176,
     isPlay: false, // 是否自动切换
-    groups: [] // 租房小组数据
+    groups: [], // 租房小组数据
+    news: [] // 最新资讯数据
   }
 
   // 页面 初次渲染
   componentDidMount() {
     this.getSwiperdata()
     this.getGroupsdata()
+    this.getNewsdata()
   }
 
   // 获取 轮播图数据
@@ -69,7 +71,6 @@ export default class Index extends Component {
   // 获取 租房小组数据
   async getGroupsdata () {
     const { data } = await axios.get('http://api-haoke-dev.itheima.net/home/groups?area=AREA%7C88cff55c-aaa4-e2e0')
-    console.log(data)
     // 判断 是否请求获取 成功
     if (data.status !== 200) {
       return
@@ -78,6 +79,20 @@ export default class Index extends Component {
       groups: data.body
     })
   }
+
+  // 获取 最新资讯数据
+  async getNewsdata () {
+    const { data } = await axios.get('http://api-haoke-dev.itheima.net/home/news?area=AREA%7C88cff55c-aaa4-e2e0')
+    console.log(data)
+    // 判断 是否请求获取 成功
+    if (data.status !== 200) {
+      return
+    }
+    this.setState({
+      news: data.body
+    })
+  }
+
 
   // 渲染 轮播图
   renderSwiper () {
@@ -118,6 +133,22 @@ export default class Index extends Component {
             })
   }
 
+  // 渲染 最新资讯
+  renderNews () {
+    return this.state.news.map((item) => {
+            return <li key={item.id}>
+                    <img src={"http://api-haoke-dev.itheima.net" + item.imgSrc}/>
+                    <div className="item-right">
+                      <h3>{item.title}</h3>
+                      <p>
+                        <span>{item.from}</span>
+                        <span>{item.date}</span>
+                      </p>
+                    </div>
+                  </li>
+          })
+  }
+
   render() {
     return (
       <div className="index">
@@ -144,7 +175,7 @@ export default class Index extends Component {
         <div className="groups">
           {/* 标题 */}
           <div className="groups-title">
-            <h2>租房安排</h2>
+            <h2>租房小组</h2>
             <span>更多</span>
           </div>
           {/* 主体区域 */}
@@ -165,7 +196,21 @@ export default class Index extends Component {
             )}
           />
           </div>
+        
+        {/* 最新资讯 */}
+        <div className="news">
+          {/* 标题区域 */}
+          <div className="news-title">最新资讯</div>
+          {/* 主体区域 */}
+          <ul className="news-content">
+            {
+              // 最新资讯 数据项
+              this.renderNews()
+            }       
+          </ul>
         </div>
+        
+      </div>
     )
   }
 }

@@ -6,7 +6,7 @@ import axios from 'axios'
 import './index.scss'
 
 // 导入 轮播图 组件
-import { Carousel, Flex } from 'antd-mobile'
+import { Carousel, Flex, Grid } from 'antd-mobile'
 
 // 导入 nav 导航栏 所需的图片
 import nav1 from "../../assets/images/nav-1.png"
@@ -40,12 +40,14 @@ export default class Index extends Component {
   state = {
     SwiperData: [], // 轮播图数据
     imgHeight: 176,
-    isPlay: false // 是否自动切换
+    isPlay: false, // 是否自动切换
+    groups: [] // 租房小组数据
   }
 
   // 页面 初次渲染
   componentDidMount() {
     this.getSwiperdata()
+    this.getGroupsdata()
   }
 
   // 获取 轮播图数据
@@ -61,6 +63,19 @@ export default class Index extends Component {
       this.setState({
         isPlay: true
       })
+    })
+  }
+
+  // 获取 租房小组数据
+  async getGroupsdata () {
+    const { data } = await axios.get('http://api-haoke-dev.itheima.net/home/groups?area=AREA%7C88cff55c-aaa4-e2e0')
+    console.log(data)
+    // 判断 是否请求获取 成功
+    if (data.status !== 200) {
+      return
+    }
+    this.setState({
+      groups: data.body
     })
   }
 
@@ -102,6 +117,7 @@ export default class Index extends Component {
                   </Flex.Item>
             })
   }
+
   render() {
     return (
       <div className="index">
@@ -123,7 +139,33 @@ export default class Index extends Component {
             this.renderNavs()
           }
         </Flex>
-      </div>
+
+        {/* 租房小组 */}
+        <div className="groups">
+          {/* 标题 */}
+          <div className="groups-title">
+            <h2>租房安排</h2>
+            <span>更多</span>
+          </div>
+          {/* 主体区域 */}
+          <Grid
+            data={this.state.groups} // 传入的菜单数据
+            columnNum={2} // 列数
+            square={false} // 每个格子是否固定为正方形
+            activeStyle // 点击反馈的自定义样式 (设为 false 时表示禁止点击反馈)
+            hasLine={false} // 是否有边框
+            renderItem={group => ( // 自定义每个 grid 条目的创建函数
+              <Flex className="grid-item" justify="between">
+                <div className="desc">
+                  <h3>{group.title}</h3>
+                  <p>{group.desc}</p>
+                </div>
+                <img src={`http://api-haoke-dev.itheima.net${group.imgSrc}`} alt="" />
+              </Flex>
+            )}
+          />
+          </div>
+        </div>
     )
   }
 }

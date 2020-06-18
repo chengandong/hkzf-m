@@ -7,7 +7,8 @@ import {BrowserRouter as Router, Route, Redirect} from 'react-router-dom'
 
 // 导入 Home 组件
 import Home from './pages/Home/'
-import Map from './pages/Map'
+import Map from './pages/Map/'
+import Citylist from './pages/Citylist/'
 
 export default class App extends Component {
   render() {
@@ -27,6 +28,9 @@ export default class App extends Component {
 
           {/* 地图找房 路由规则 */}
           <Route exact path="/map" component={Map}></Route>
+
+          {/* 城市列表 路由规则 */}
+          <Route path="/citylist" component={Citylist}></Route>
         </div>
       </Router>    
     )

@@ -42,7 +42,8 @@ export default class Index extends Component {
     imgHeight: 176,
     isPlay: false, // 是否自动切换
     groups: [], // 租房小组数据
-    news: [] // 最新资讯数据
+    news: [], // 最新资讯数据
+    cityName: '' // 当前定位城市
   }
 
   // 页面 初次渲染
@@ -50,6 +51,21 @@ export default class Index extends Component {
     this.getSwiperdata()
     this.getGroupsdata()
     this.getNewsdata()
+    // 定位 
+    this.getLocalCity()   
+  }
+
+  // 使用 百度地图 进行ip定位
+  getLocalCity () {
+    var myCity = new window.BMap.LocalCity(); // 根据用户IP 返回城市级别的定位结果
+    myCity.get((result)=>{
+      var cityName = result.name;
+      console.log("当前定位城市:"+cityName)
+      // 设置 当前 城市
+      this.setState({
+        cityName
+      })
+    })
   }
 
   // 获取 轮播图数据
@@ -83,7 +99,6 @@ export default class Index extends Component {
   // 获取 最新资讯数据
   async getNewsdata () {
     const { data } = await axios.get('http://api-haoke-dev.itheima.net/home/news?area=AREA%7C88cff55c-aaa4-e2e0')
-    console.log(data)
     // 判断 是否请求获取 成功
     if (data.status !== 200) {
       return
@@ -137,7 +152,7 @@ export default class Index extends Component {
   renderNews () {
     return this.state.news.map((item) => {
             return <li key={item.id}>
-                    <img src={"http://api-haoke-dev.itheima.net" + item.imgSrc}/>
+                    <img src={"http://api-haoke-dev.itheima.net" + item.imgSrc} alt="" />
                     <div className="item-right">
                       <h3>{item.title}</h3>
                       <p>
@@ -157,8 +172,11 @@ export default class Index extends Component {
           <Flex className='searchLeft'>
             <div
               className='location'
+              onClick={() => {
+                this.props.history.push('/citylist')
+              }}
             >
-              <span>上海</span>
+              <span>{this.state.cityName}</span>
               <i className="iconfont icon-arrow" />
             </div>
             <div
@@ -175,6 +193,7 @@ export default class Index extends Component {
             }}
           />
         </Flex>
+
         {/* 轮播图 */}
         <Carousel
           autoplay={this.state.isPlay} // 是否自动切换

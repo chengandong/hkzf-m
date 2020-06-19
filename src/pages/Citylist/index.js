@@ -7,9 +7,13 @@ import './citylist.scss'
 // 导入axios
 import axios from 'axios'
 
+// 导入 封装的 定位插件工具
+import { getCurrentCity } from '../../utils/LocalCity'
+
 export default class Citylist extends Component {
   state = {
-    cityList: {} // 左侧城市列表
+    cityList: {}, // 左侧城市列表
+    cityIndex: [] // 右侧城市开头字母
   }
   componentDidMount () {   
     this.getCitylist()   
@@ -18,8 +22,25 @@ export default class Citylist extends Component {
   // 获取城市列表数据
   async getCitylist () {
     const { data } = await axios.get('http://api-haoke-dev.itheima.net/area/city?level=1')
-    // 讲获取到的 数据 进行格式化 转换为 自己需要的
+    // 1. 将获取到的 数据 进行格式化 转换为 自己需要的
     const { cityList, cityIndex } = this.formatCity(data.body)
+    
+    // 2. 获取 热门城市 数据
+    const hotCity = await axios.get('http://api-haoke-dev.itheima.net/area/hot')
+    // 添加 热门城市 这项
+    cityList['hot'] = hotCity.data.body
+    cityIndex.unshift('hot')
+
+    // 3. 得到 当前定位城市 信息数据
+    let location = await getCurrentCity()
+    // 添加 当前定位城市 这项
+    cityList['#'] = [location]
+    cityIndex.unshift('#')
+    // 将最终结果 赋值
+    this.setState({
+      cityList,
+      cityIndex
+    })
     console.log('新城市数据列表', cityList)
     console.log('右侧', cityIndex)
   }

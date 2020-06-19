@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 
 import { NavBar, Icon } from 'antd-mobile'
+
+// 导入List
+import {List} from 'react-virtualized'
 // 导入 样式
 import './citylist.scss'
 
@@ -9,6 +12,7 @@ import axios from 'axios'
 
 // 导入 封装的 定位插件工具
 import { getCurrentCity } from '../../utils/LocalCity'
+
 
 export default class Citylist extends Component {
   state = {
@@ -41,8 +45,8 @@ export default class Citylist extends Component {
       cityList,
       cityIndex
     })
-    console.log('新城市数据列表', cityList)
-    console.log('右侧', cityIndex)
+    // console.log('新城市数据列表', cityList)
+    // console.log('右侧', cityIndex)
   }
 
   // 格式化 城市数据
@@ -68,6 +72,37 @@ export default class Citylist extends Component {
     return { cityList, cityIndex }
   }
 
+  // 渲染 每一行 数据
+  rowRenderer = ({
+    key, // 唯一的键
+    index, // 每一行数据的索引
+    isScrolling, // 该列表是否正在滚动
+    isVisible, // 该行是否在列表中可见
+    style, // 要应用于行的样式对象
+  }) => {
+    // 通过 索引得到 城市关键字
+    const cityWords = this.state.cityIndex[index]
+    return (   
+      <div className="city" key={key} style={style}>
+        <div className="city-title">{this.formatWord(cityWords)}</div>
+        <div className="city-name">北京</div>
+      </div>
+    )
+  }
+
+  // 城市关键字 数据格式 处理
+  formatWord (cityWords) {
+    // 将 # hot a b c 转换为 # -> 当前定位 hot -> 热门城市  其他abc -> 大写
+    switch (cityWords) {
+      case '#':
+        return '当前定位'
+      case 'hot':
+        return '热门城市'    
+      default:
+        return cityWords.toUpperCase()
+    }
+  }
+
   render() {
     return (
       <div className="citylist">
@@ -77,6 +112,14 @@ export default class Citylist extends Component {
           icon={<Icon type="left" />}
           onLeftClick={() => console.log('onLeftClick')}
         >城市选择</NavBar>
+        {/* 城市列表 */}
+        <List
+          width={300}
+          height={300}
+          rowCount={this.state.cityIndex.length} // 列表 总条数
+          rowHeight={60} // 每行盒子的高度
+          rowRenderer={this.rowRenderer}
+        />
       </div>
     )
   }

@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { NavBar, Icon } from 'antd-mobile'
 
 // 导入List
-import {List} from 'react-virtualized'
+import { List } from 'react-virtualized'
 // 导入 样式
 import './citylist.scss'
 
@@ -85,7 +85,7 @@ export default class Citylist extends Component {
     return (   
       <div className="city" key={key} style={style}>
         <div className="city-title">{this.formatWord(cityWords)}</div>
-        <div className="city-name">北京</div>
+        <div className="city-name">集宁</div>
       </div>
     )
   }
@@ -110,14 +110,16 @@ export default class Citylist extends Component {
           className="navbar"
           mode="light"
           icon={<Icon type="left" />}
-          onLeftClick={() => console.log('onLeftClick')}
+          onLeftClick={() => {
+            this.props.history.go(-1)
+          }}
         >城市选择</NavBar>
         {/* 城市列表 */}
         <List
-          width={300}
-          height={300}
+          width={375}
+          height={622}
           rowCount={this.state.cityIndex.length} // 列表 总条数
-          rowHeight={60} // 每行盒子的高度
+          rowHeight={100} // 每行盒子的高度
           rowRenderer={this.rowRenderer}
         />
       </div>

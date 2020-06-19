@@ -8,6 +8,9 @@ import './index.scss'
 // 导入 轮播图 组件
 import { Carousel, Flex, Grid } from 'antd-mobile'
 
+// 导入 封装的 定位插件工具
+import { getCurrentCity } from '../../utils/LocalCity'
+
 // 导入 nav 导航栏 所需的图片
 import nav1 from "../../assets/images/nav-1.png"
 import nav2 from "../../assets/images/nav-2.png"
@@ -52,19 +55,15 @@ export default class Index extends Component {
     this.getGroupsdata()
     this.getNewsdata()
     // 定位 
-    this.getLocalCity()   
+    this.getLocalCity()  
   }
 
   // 使用 百度地图 进行ip定位
-  getLocalCity () {
-    var myCity = new window.BMap.LocalCity(); // 根据用户IP 返回城市级别的定位结果
-    myCity.get((result)=>{
-      var cityName = result.name;
-      console.log("当前定位城市:"+cityName)
-      // 设置 当前 城市
-      this.setState({
-        cityName
-      })
+  async getLocalCity () {
+    const location = await getCurrentCity()
+    // 设置 当前 城市
+    this.setState({
+      cityName: location.label
     })
   }
 

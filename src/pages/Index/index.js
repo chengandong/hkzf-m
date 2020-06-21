@@ -69,7 +69,7 @@ export default class Index extends Component {
 
   // 获取 轮播图数据
   async getSwiperdata () {
-    const { data } = await axios.get("http://api-haoke-dev.itheima.net/home/swiper")
+    const { data } = await axios.get("http://api-haoke-web.itheima.net/home/swiper")
     // 判断 是否请求获取 成功
     if (data.status !== 200) {
       return
@@ -85,7 +85,7 @@ export default class Index extends Component {
 
   // 获取 租房小组数据
   async getGroupsdata () {
-    const { data } = await axios.get('http://api-haoke-dev.itheima.net/home/groups?area=AREA%7C88cff55c-aaa4-e2e0')
+    const { data } = await axios.get('http://api-haoke-web.itheima.net/home/groups?area=AREA%7C88cff55c-aaa4-e2e0')
     // 判断 是否请求获取 成功
     if (data.status !== 200) {
       return
@@ -97,7 +97,7 @@ export default class Index extends Component {
 
   // 获取 最新资讯数据
   async getNewsdata () {
-    const { data } = await axios.get('http://api-haoke-dev.itheima.net/home/news?area=AREA%7C88cff55c-aaa4-e2e0')
+    const { data } = await axios.get('http://api-haoke-web.itheima.net/home/news?area=AREA%7C88cff55c-aaa4-e2e0')
     // 判断 是否请求获取 成功
     if (data.status !== 200) {
       return
@@ -117,7 +117,7 @@ export default class Index extends Component {
         style={{ display: 'inline-block', width: '100%', height: this.state.imgHeight }}
       >
         <img
-          src={`http://api-haoke-dev.itheima.net${SwiperImg.imgSrc}`}
+          src={`http://api-haoke-web.itheima.net${SwiperImg.imgSrc}`}
           alt=""
           style={{ width: '100%', verticalAlign: 'top' }}
           onLoad={() => {
@@ -151,7 +151,7 @@ export default class Index extends Component {
   renderNews () {
     return this.state.news.map((item) => {
             return <li key={item.id}>
-                    <img src={"http://api-haoke-dev.itheima.net" + item.imgSrc} alt="" />
+                    <img src={"http://api-haoke-web.itheima.net" + item.imgSrc} alt="" />
                     <div className="item-right">
                       <h3>{item.title}</h3>
                       <p>
@@ -232,7 +232,7 @@ export default class Index extends Component {
                   <h3>{group.title}</h3>
                   <p>{group.desc}</p>
                 </div>
-                <img src={`http://api-haoke-dev.itheima.net${group.imgSrc}`} alt="" />
+                <img src={`http://api-haoke-web.itheima.net${group.imgSrc}`} alt="" />
               </Flex>
             )}
           />

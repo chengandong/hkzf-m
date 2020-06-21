@@ -1,6 +1,7 @@
 .citylist{
+  height: 100%; // 方便 AutoSizer计算
   padding-top: 45px;
-  background-color: #fff;
+  background-color: #fff; 
 }
 .navbar{
   position: fixed;

@@ -13,7 +13,7 @@ export const getCurrentCity = () => {
           var cityName = result.name
           // console.log("当前定位城市:"+cityName)
           // 根据城市名称查询该城市信息
-          let { data } = await axios.get('http://api-haoke-dev.itheima.net/area/info?name=' + cityName)
+          let { data } = await axios.get('http://api-haoke-web.itheima.net/area/info?name=' + cityName)
           
           // 将 得到的 城市信息数据 转换为 JSON 字符串  
           let location = JSON.stringify(data.body)

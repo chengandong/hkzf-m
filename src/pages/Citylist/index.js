@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 
-import { NavBar, Icon } from 'antd-mobile'
+import { NavBar, Icon, Toast } from 'antd-mobile'
 
-// 导入List
-import { List } from 'react-virtualized'
+// 导入List 组件
+import { AutoSizer, List } from 'react-virtualized'
 // 导入 样式
 import './citylist.scss'
 
@@ -12,7 +12,6 @@ import axios from 'axios'
 
 // 导入 封装的 定位插件工具
 import { getCurrentCity } from '../../utils/LocalCity'
-
 
 export default class Citylist extends Component {
   state = {
@@ -25,12 +24,12 @@ export default class Citylist extends Component {
 
   // 获取城市列表数据
   async getCitylist () {
-    const { data } = await axios.get('http://api-haoke-dev.itheima.net/area/city?level=1')
+    const { data } = await axios.get('http://api-haoke-web.itheima.net/area/city?level=1')
     // 1. 将获取到的 数据 进行格式化 转换为 自己需要的
     const { cityList, cityIndex } = this.formatCity(data.body)
     
     // 2. 获取 热门城市 数据
-    const hotCity = await axios.get('http://api-haoke-dev.itheima.net/area/hot')
+    const hotCity = await axios.get('http://api-haoke-web.itheima.net/area/hot')
     // 添加 热门城市 这项
     cityList['hot'] = hotCity.data.body
     cityIndex.unshift('hot')
@@ -82,10 +81,35 @@ export default class Citylist extends Component {
   }) => {
     // 通过 索引得到 城市关键字
     const cityWords = this.state.cityIndex[index]
+    // 通过 城市关键字 拿到 对应的城市数组
+    const citys = this.state.cityList[cityWords]
     return (   
       <div className="city" key={key} style={style}>
+        {/* 城市关键字 */}
         <div className="city-title">{this.formatWord(cityWords)}</div>
-        <div className="city-name">集宁</div>
+        {/* 城市列表 */}
+        {
+          citys.map((city) => {
+            return <div
+                     className="city-name"
+                     key={city.value}
+                     onClick={() => {
+                      // 定义 一个数组 保存 北上广深 城市
+                      const first_cities = ['北京', '上海', '广州', '深圳']
+
+                      // 判断 是否是 北上广深 城市
+                      if (first_cities.indexOf(city.label) !== -1) {
+                        // 北上广深 城市 将其存入 本地存储中
+                        window.localStorage.setItem('local-city', JSON.stringify(city))
+                        // 跳转到 首页
+                        this.props.history.push('/home/index')
+                      } else {
+                        Toast.info('该城市 暂无房源哦 ^_^', 2)
+                      }
+                     }}
+                    >{city.label}</div>
+          })
+        }
       </div>
     )
   }
@@ -103,6 +127,17 @@ export default class Citylist extends Component {
     }
   }
 
+  // 动态 计算每行高度
+  // ({ index: number }): number  : number 函数返回值 类型number
+  getHeight = ({index}) => {
+    // 通过 索引得到 城市关键字
+    const cityWords = this.state.cityIndex[index]
+    // 通过 城市关键字 拿到 对应的城市数组
+    const citys = this.state.cityList[cityWords]
+    // 必须返回 number数字类型
+    return 36 + citys.length * 50
+  }
+
   render() {
     return (
       <div className="citylist">
@@ -115,13 +150,19 @@ export default class Citylist extends Component {
           }}
         >城市选择</NavBar>
         {/* 城市列表 */}
-        <List
-          width={375}
-          height={622}
-          rowCount={this.state.cityIndex.length} // 列表 总条数
-          rowHeight={100} // 每行盒子的高度
-          rowRenderer={this.rowRenderer}
-        />
+        {/* AutoSizer 计算屏幕剩余宽高 */}
+        <AutoSizer> 
+          {({height, width}) => (
+            <List
+              width={width}
+              height={height}
+              rowCount={this.state.cityIndex.length} // 列表 总条数
+              rowHeight={this.getHeight} // 每行盒子的高度
+              rowRenderer={this.rowRenderer}
+            />
+          )}
+        </AutoSizer>
+        
       </div>
     )
   }

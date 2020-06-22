@@ -7,8 +7,8 @@ import { AutoSizer, List } from 'react-virtualized'
 // 导入 样式
 import './citylist.scss'
 
-// 导入axios
-import axios from 'axios'
+// 导入 封装后的 axios
+import request from '../../utils/request'
 
 // 导入 封装的 定位插件工具
 import { getCurrentCity } from '../../utils/LocalCity'
@@ -30,12 +30,12 @@ export default class Citylist extends Component {
 
   // 获取城市列表数据
   async getCitylist () {
-    const { data } = await axios.get('http://api-haoke-web.itheima.net/area/city?level=1')
+    const { data } = await request.get('/area/city?level=1')
     // 1. 将获取到的 数据 进行格式化 转换为 自己需要的
     const { cityList, cityIndex } = this.formatCity(data.body)
     
     // 2. 获取 热门城市 数据
-    const hotCity = await axios.get('http://api-haoke-web.itheima.net/area/hot')
+    const hotCity = await request.get('/area/hot')
     // 添加 热门城市 这项
     cityList['hot'] = hotCity.data.body
     cityIndex.unshift('hot')

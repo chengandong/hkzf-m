@@ -1,6 +1,4 @@
 import React, { Component } from 'react'
-// 导入 axios
-import axios from 'axios'
 
 // 导入样式
 import './index.scss'
@@ -10,6 +8,9 @@ import { Carousel, Flex, Grid } from 'antd-mobile'
 
 // 导入 封装的 定位插件工具
 import { getCurrentCity } from '../../utils/LocalCity'
+
+// 导入 封装后的 axios
+import request from '../../utils/request'
 
 // 导入 nav 导航栏 所需的图片
 import nav1 from "../../assets/images/nav-1.png"
@@ -69,7 +70,7 @@ export default class Index extends Component {
 
   // 获取 轮播图数据
   async getSwiperdata () {
-    const { data } = await axios.get("http://api-haoke-web.itheima.net/home/swiper")
+    const { data } = await request.get("/home/swiper")
     // 判断 是否请求获取 成功
     if (data.status !== 200) {
       return
@@ -85,7 +86,7 @@ export default class Index extends Component {
 
   // 获取 租房小组数据
   async getGroupsdata () {
-    const { data } = await axios.get('http://api-haoke-web.itheima.net/home/groups?area=AREA%7C88cff55c-aaa4-e2e0')
+    const { data } = await request.get('/home/groups?area=AREA%7C88cff55c-aaa4-e2e0')
     // 判断 是否请求获取 成功
     if (data.status !== 200) {
       return
@@ -97,7 +98,7 @@ export default class Index extends Component {
 
   // 获取 最新资讯数据
   async getNewsdata () {
-    const { data } = await axios.get('http://api-haoke-web.itheima.net/home/news?area=AREA%7C88cff55c-aaa4-e2e0')
+    const { data } = await request.get('/home/news?area=AREA%7C88cff55c-aaa4-e2e0')
     // 判断 是否请求获取 成功
     if (data.status !== 200) {
       return

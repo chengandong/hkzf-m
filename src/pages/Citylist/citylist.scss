@@ -26,3 +26,23 @@
     color: #333;
   }
 }
+
+// 右侧 城市关键字列表
+.city-index {
+  position: absolute;
+  top: 55px;
+  right: 12px;
+  li{
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    margin-bottom: 9px;
+    border-radius: 50%;
+    font-size: 14px;
+  }
+  .active{
+    background-color: #21b97a;
+    color: #fff;
+  }
+}

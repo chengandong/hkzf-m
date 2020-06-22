@@ -14,9 +14,12 @@ import axios from 'axios'
 import { getCurrentCity } from '../../utils/LocalCity'
 
 export default class Citylist extends Component {
+  listRef = React.createRef() // 创建 ref
+
   state = {
     cityList: {}, // 左侧城市列表
-    cityIndex: [] // 右侧城市开头字母
+    cityIndex: [], // 右侧城市开头字母
+    activeIndex: 0 // 默认索引为0的 选中
   }
   componentDidMount () {   
     this.getCitylist()   
@@ -114,6 +117,19 @@ export default class Citylist extends Component {
     )
   }
 
+  // 解决 右边 城市关键字列表 高亮问题
+  // ({ overscanStartIndex: number, overscanStopIndex: number, startIndex: number, stopIndex: number })
+  // : void 不需要返回值
+  onRowsRendered = ({ overscanStartIndex, overscanStopIndex, startIndex, stopIndex }) => {
+    // 判断  减少性能消耗
+    if (startIndex !== this.state.activeIndex) {
+      // 修改activeIndex索引 对应城市关键字
+      this.setState({
+        activeIndex: startIndex
+      })
+    }    
+  }
+
   // 城市关键字 数据格式 处理
   formatWord (cityWords) {
     // 将 # hot a b c 转换为 # -> 当前定位 hot -> 热门城市  其他abc -> 大写
@@ -138,6 +154,24 @@ export default class Citylist extends Component {
     return 36 + citys.length * 50
   }
 
+  // 渲染 右侧 城市关键字列表
+  renderCityIndex () {
+    return this.state.cityIndex.map((item, index) => {
+            return <li
+                    key={index}
+                    className={index === this.state.activeIndex ? 'active' : ''}
+                    onClick={() => {
+                      // 让List组件 滚动到对应的位置
+                      // scrollToRow (index: number)
+                      this.listRef.current.scrollToRow(index)
+                    }}
+                    >
+                      {/* 转换格式 */}
+                      { item==='hot'?'热':item.toUpperCase() }
+                    </li>
+                  })
+  }
+
   render() {
     return (
       <div className="citylist">
@@ -159,10 +193,19 @@ export default class Citylist extends Component {
               rowCount={this.state.cityIndex.length} // 列表 总条数
               rowHeight={this.getHeight} // 每行盒子的高度
               rowRenderer={this.rowRenderer}
+              onRowsRendered={this.onRowsRendered} // 函数
+              scrollToAlignment= 'start' // 控制滚动到行的对齐方式
+              ref={this.listRef}
             />
           )}
         </AutoSizer>
         
+        {/* 右侧 城市关键字列表 */}
+        <ul className="city-index">
+          {
+            this.renderCityIndex()
+          }
+        </ul>
       </div>
     )
   }

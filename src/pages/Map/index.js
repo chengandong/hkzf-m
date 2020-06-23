@@ -24,7 +24,7 @@ export default class Map extends Component {
   }
 
   // 发送请求获取数据 生成 地图 覆盖物
-  async renderOverlays (id) {
+  async renderOverlays (id, type) {
     const { data } = await request.get('/area/map?id=' + id)
     // 循环 生成 覆盖物 到地图
     data.body.forEach((item) => {
@@ -35,24 +35,66 @@ export default class Map extends Component {
         offset: new BMap.Size(-35, -35) // 设置文本偏移量
       }
       var label = new BMap.Label('', opts);  // 创建文本标注对象
-        // 设置信息窗口内容
-        label.setContent(
-        `
-          <div class="${styles.bubble}">
-            <p class="${styles.name}">${item.label}</p>
-            <p>${item.count}套</p>
-          </div>
-        `
-        )
+        // 判断 是矩形 还是 圆形 ---- 只要 小区是 矩形
+        if (type === 'cycle') {
+          // 设置信息窗口内容
+          label.setContent(
+            `
+              <div class="${styles.bubble}">
+                <p class="${styles.name}">${item.label}</p>
+                <p>${item.count}套</p>
+              </div>
+            `
+            )
+        } else if (type === 'rect') {
+          // 设置信息窗口内容
+          label.setContent(
+            `
+            <div class="${styles.rect}">
+              <span class="${styles.housename}">天通苑小区</span>
+              <span class="${styles.housenum}">100套</span>
+              <i class="${styles.arrow}"></i>
+            </div>
+            `
+            )
+        }
+        
         // label标签样式 覆盖掉 原有的
         label.setStyle({
           padding:0,
           border:'none'
         })
-      // 添加label覆盖物
-      this.map.addOverlay(label)
-    })
-    
+        // 给label覆盖物 添加 点击事件
+        label.addEventListener('click', () => {
+          //点击时候的 地图级别  
+          const zoom=this.map.getZoom() // 11 13 15 ..
+          // 判断 当前地图 级别
+          if (zoom === 11) {
+            // 1.设置地图展示级别----去县级
+            this.map.centerAndZoom(point, 13)
+            // 2.清除之前的那些覆盖物 ---- 百度地图的bug(需要延时一下)
+            window.setTimeout(() => {
+              this.map.clearOverlays()
+            }, 1)  
+            // 3.发送请求 获取区级房子套数 并循环生成覆盖物
+            this.renderOverlays(item.value, 'cycle')
+          } else if (zoom === 13) {
+            // 1.设置地图展示级别---去小区
+            this.map.centerAndZoom(point, 15)
+            // 2.清除之前的那些覆盖物 ---- 百度地图的bug(需要延时一下)
+            window.setTimeout(() => {
+              this.map.clearOverlays()
+            }, 1)  
+            // 3.发送请求 获取区级房子套数 并循环生成覆盖物
+            this.renderOverlays(item.value, 'rect')
+          } else if (zoom === 15) {
+            console.log('小气')
+          }
+          
+        })
+        // 添加label覆盖物
+        this.map.addOverlay(label)
+      })   
   }
   // 初始化地图
   async initMap () {
@@ -75,7 +117,7 @@ export default class Map extends Component {
           this.map.addControl(new BMap.MapTypeControl()) // 地图类型  卫星三维
 
           // 生成 地图覆盖物
-          this.renderOverlays(location.value)        
+          this.renderOverlays(location.value, 'cycle')        
         }      
     }, 
     location.label)

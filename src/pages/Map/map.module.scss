@@ -22,13 +22,14 @@
 .rect {
   height: 20px;
   line-height: 19px;
-  width: 100px;
+  width: 110px;
   padding: 0 3px;
   border-radius: 3px;
   position: absolute;
   background: rgba(12, 181, 106, 0.9);
   cursor: pointer;
   white-space: nowrap;
+  color: #fff;
 }
 
 .arrow {

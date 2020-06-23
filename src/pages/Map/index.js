@@ -15,6 +15,9 @@ import NavHeader from '../../components/NavHeader/'
 // 导入 封装的 定位插件工具
 import { getCurrentCity } from '../../utils/LocalCity'
 
+// 导入 Toast轻提示 组件
+import { Toast } from 'antd-mobile'
+
 // 当在HTML文件中引入定义全局变量的脚本并尝试在代码中使用这些变量时,可以通过从window对象显式读取全局变量来避免这种情况
 const BMap=window.BMap
 
@@ -30,7 +33,11 @@ export default class Map extends Component {
 
   // 发送请求获取数据 生成 地图 覆盖物
   async renderOverlays (id, type) {
+    // 发送请求之前 开启loading
+    Toast.loading('加载中...', 0)
     const { data } = await request.get('/area/map?id=' + id)
+    // 成功之后 开启loading
+    Toast.hide()
     // 循环 生成 覆盖物 到地图
     data.body.forEach((item) => {
       // longitude 经度 latitude 纬度
@@ -70,7 +77,7 @@ export default class Map extends Component {
           border:'none'
         })
         // 给label覆盖物 添加 点击事件
-        label.addEventListener('click', () => {
+        label.addEventListener('click', (e) => {
           //点击时候的 地图级别  
           const zoom=this.map.getZoom() // 11 13 15 ..
           // 判断 当前地图 级别
@@ -93,6 +100,17 @@ export default class Map extends Component {
             // 3.发送请求 获取区级房子套数 并循环生成覆盖物
             this.renderOverlays(item.value, 'rect')
           } else if (zoom === 15) {
+            // 1. 获取 点击时的 x,y 坐标
+            const clickX = e.changedTouches[0].clientX
+            const clickY = e.changedTouches[0].clientY
+            // 2. 获取 当前屏幕中心点位置
+            const centerX = window.innerWidth / 2
+            const centerY = (window.innerHeight - 330) / 2
+            // 3. 需要移动 的距离
+            const distanceX=clickX-centerX
+            const distanceY=clickY-centerY
+            // 4. 移动地图
+            this.map.panBy(-distanceX, -distanceY)
             // 获取 房屋信息
             this.getHousesList(item.value)
           }
@@ -150,6 +168,13 @@ export default class Map extends Component {
     const location = await getCurrentCity()
     // 1.创建地图实例
     this.map = new BMap.Map("container")
+
+    // 地图开始移动时movestart 隐藏房子列表
+    this.map.addEventListener('movestart', () => {
+      this.setState({
+        isShow: false
+      })
+    })
     // 2.创建地址解析器实例     
     var myGeo = new BMap.Geocoder();      
     // 3.将地址解析结果显示在地图上，并调整地图视野    
@@ -170,7 +195,7 @@ export default class Map extends Component {
     }, 
     location.label)
   }
-  
+
   render() {
     return (
       <div className='map'>

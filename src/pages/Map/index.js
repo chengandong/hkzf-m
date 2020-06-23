@@ -19,6 +19,11 @@ import { getCurrentCity } from '../../utils/LocalCity'
 const BMap=window.BMap
 
 export default class Map extends Component {
+  state = {
+    houseCount: 0, // 小区房屋 数量
+    houseList: [], // 小区房屋 信息列表
+    isShow: false // 默认 不显示房屋列表
+  }
   componentDidMount () {
     this.initMap()
   }
@@ -51,8 +56,8 @@ export default class Map extends Component {
           label.setContent(
             `
             <div class="${styles.rect}">
-              <span class="${styles.housename}">天通苑小区</span>
-              <span class="${styles.housenum}">100套</span>
+              <span class="${styles.housename}">${item.label}</span>
+              <span class="${styles.housenum}">${item.count}套</span>
               <i class="${styles.arrow}"></i>
             </div>
             `
@@ -88,7 +93,8 @@ export default class Map extends Component {
             // 3.发送请求 获取区级房子套数 并循环生成覆盖物
             this.renderOverlays(item.value, 'rect')
           } else if (zoom === 15) {
-            console.log('小气')
+            // 获取 房屋信息
+            this.getHousesList(item.value)
           }
           
         })
@@ -96,6 +102,48 @@ export default class Map extends Component {
         this.map.addOverlay(label)
       })   
   }
+
+  // 获取 房屋列表 数据
+  async getHousesList (id) {
+    const { data } = await request.get('/houses/?cityId=' + id)
+    // 赋值 房屋信息
+    this.setState({
+      houseCount: data.body.count,
+      houseList: data.body.list,
+      isShow: true // 显示 房屋列表
+    })
+  }
+
+  // 渲染 房屋列表 
+  renderHouseslist () {
+    return this.state.houseList.map((house) => {
+            return <div className={styles.house} key={house.houseCode}>
+                    <div className={styles.imgWrap}>
+                      <img className={styles.img} src={`http://api-haoke-web.itheima.net${house.houseImg}`} alt="" />
+                    </div>
+                    <div className={styles.content}>
+                      <h3 className={styles.title}>{house.title}</h3>
+                      <div className={styles.desc}>{house.desc}</div>
+                      <div>
+                          {/* ['近地铁', '随时看房'] */}
+                          <span className={[styles.tag,styles.tag1 ].join(' ')} >
+                            {
+                              house.tags.map((value, index) => {
+                                return <span key={index} className={[styles.tag,styles.tag1 ].join(' ')}>
+                                  {value}
+                                </span>
+                              })
+                            }
+                          </span>
+                      </div>
+                      <div className={styles.price}>
+                        <span className={styles.priceNum}>{house.price}</span> 元/月
+                      </div>
+                    </div>
+                  </div>
+    })
+  }
+
   // 初始化地图
   async initMap () {
     // 获取 当前定位 城市
@@ -122,6 +170,7 @@ export default class Map extends Component {
     }, 
     location.label)
   }
+  
   render() {
     return (
       <div className='map'>
@@ -129,6 +178,25 @@ export default class Map extends Component {
         <NavHeader>地图找房</NavHeader>
         {/* 创建地图容器元素 */}
         <div id="container"></div>
+
+        {/* 房屋列表 */}
+        <div
+          className={[styles.houseList, this.state.isShow ? styles.show : '' ].join(' ')}
+        >
+          <div className={styles.titleWrap}>
+            <h1 className={styles.listTitle}>房屋列表</h1>
+            <a className={styles.titleMore} href="/house/list">
+                更多房源
+            </a>
+          </div>
+          <div className={styles.houseItems}>
+            {/* 渲染 房屋信息 */}
+            {
+              this.renderHouseslist()
+            }
+          </div>     
+        </div>
+        
       </div>
     )
   }

@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 // 导入 封装的 定位插件工具
 import { getCurrentCity } from '../../utils/LocalCity'
 
+// 导入 封装 后的 搜素导航栏组件
 import SearchHeader from '../../components/SearchHeader/'
 
 export default class Houselist extends Component {

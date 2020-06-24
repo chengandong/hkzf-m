@@ -3,6 +3,9 @@ import React, { Component } from 'react'
 // 导入样式
 import './index.scss'
 
+// 导入 封装 后的 搜素导航栏组件
+import SearchHeader from '../../components/SearchHeader/'
+
 // 导入 轮播图 组件
 import { Carousel, Flex, Grid } from 'antd-mobile'
 
@@ -168,31 +171,8 @@ export default class Index extends Component {
     return (
       <div className="index">
         {/* 顶部导航 */}
-        <Flex className='searchBox'>
-          <Flex className='searchLeft'>
-            <div
-              className='location'
-              onClick={() => {
-                this.props.history.push('/citylist')
-              }}
-            >
-              <span>{this.state.cityName}</span>
-              <i className="iconfont icon-arrow" />
-            </div>
-            <div
-              className='searchForm'
-            >
-              <i className="iconfont icon-seach" />
-              <span>请输入小区或地址</span>
-            </div>
-          </Flex>
-          <i
-            className="iconfont icon-map"
-            onClick={() => {
-              this.props.history.push('/map')
-            }}
-          />
-        </Flex>
+        {/* 搜素 导航部分 父-->子 */}
+        <SearchHeader cityName={this.state.cityName}></SearchHeader>
 
         {/* 轮播图 */}
         <Carousel
